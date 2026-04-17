@@ -101,10 +101,10 @@
 </div>
 
 <script>
-  const BASE_URL = "https://YOUR_API_GATEWAY_URL"; // GANTI INI
+  const BASE_URL = "https://v4oq2c6tm2.execute-api.us-east-1.amazonaws.com/dev"; // GANTI INI
 
   async function getAll() {
-    const res = await fetch(`${BASE_URL}/teman`);
+    const res = await fetch(`${BASE_URL}/friends`);
     const data = await res.json();
 
     const tbody = document.getElementById("tableBody");
@@ -134,7 +134,7 @@
     const nama = document.getElementById("nama").value;
     const umur = parseInt(document.getElementById("umur").value);
 
-    await fetch(`${BASE_URL}/teman`, {
+    await fetch(`${BASE_URL}/friends`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nama, umur })
@@ -147,7 +147,7 @@
     const nama = document.getElementById("nama").value;
     const umur = parseInt(document.getElementById("umur").value);
 
-    await fetch(`${BASE_URL}/teman/${nama}`, {
+    await fetch(`${BASE_URL}/friends/${nama}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ umur })
@@ -159,7 +159,7 @@
   async function deleteTeman(nama) {
     if (!confirm("Yakin mau hapus?")) return;
 
-    await fetch(`${BASE_URL}/teman/${nama}`, {
+    await fetch(`${BASE_URL}/friends/${nama}`, {
       method: "DELETE"
     });
 
