@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CRUD Teman</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      width: calc(50% - 20px);
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .btn-add { background: #22c55e; color: white; }
+    .btn-update { background: #3b82f6; color: white; }
+    .btn-delete { background: #ef4444; color: white; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #334155;
+      text-align: left;
+    }
+
+    tr:hover {
+      background: #334155;
+    }
+
+    .actions button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>👥 CRUD Teman</h1>
+
+  <div class="card">
+    <h3>Tambah / Update Teman</h3>
+    <input type="text" id="nama" placeholder="Nama" />
+    <input type="number" id="umur" placeholder="Umur" />
+    <br />
+    <button class="btn-add" onclick="createTeman()">Tambah</button>
+    <button class="btn-update" onclick="updateTeman()">Update</button>
+  </div>
+
+  <div class="card">
+    <h3>Daftar Teman</h3>
+    <button onclick="getAll()">Refresh</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Umur</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const BASE_URL = "https://YOUR_API_GATEWAY_URL"; // GANTI INI
+
+  async function getAll() {
+    const res = await fetch(`${BASE_URL}/teman`);
+    const data = await res.json();
+
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    data.forEach(item => {
+      const row = `
+        <tr>
+          <td>${item.nama}</td>
+          <td>${item.umur}</td>
+          <td class="actions">
+            <button onclick="fillForm('${item.nama}', ${item.umur})">Edit</button>
+            <button class="btn-delete" onclick="deleteTeman('${item.nama}')">Delete</button>
+          </td>
+        </tr>
+      `;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function fillForm(nama, umur) {
+    document.getElementById("nama").value = nama;
+    document.getElementById("umur").value = umur;
+  }
+
+  async function createTeman() {
+    const nama = document.getElementById("nama").value;
+    const umur = parseInt(document.getElementById("umur").value);
+
+    await fetch(`${BASE_URL}/teman`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nama, umur })
+    });
+
+    getAll();
+  }
+
+  async function updateTeman() {
+    const nama = document.getElementById("nama").value;
+    const umur = parseInt(document.getElementById("umur").value);
+
+    await fetch(`${BASE_URL}/teman/${nama}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ umur })
+    });
+
+    getAll();
+  }
+
+  async function deleteTeman(nama) {
+    if (!confirm("Yakin mau hapus?")) return;
+
+    await fetch(`${BASE_URL}/teman/${nama}`, {
+      method: "DELETE"
+    });
+
+    getAll();
+  }
+
+  // auto load
+  getAll();
+</script>
+
+</body>
+</html>
